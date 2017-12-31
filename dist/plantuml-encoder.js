@@ -361,11 +361,12 @@ function zip_SMALLER(tree, n, m) {
  * read string data
  */
 function zip_read_buff(buff, offset, n) {
-    var i;
-    for(i = 0; i < n && zip_deflate_pos < zip_deflate_data.length; i++)
-	buff[offset + i] =
-	    zip_deflate_data.charCodeAt(zip_deflate_pos++) & 0xff;
-    return i;
+	var i;
+	for(i = 0; i < n && zip_deflate_pos < zip_deflate_data.length; i++) {
+		if( typeof zip_deflate_data != 'string' ) continue;
+		buff[offset + i] = zip_deflate_data.charCodeAt(zip_deflate_pos++) & 0xff;
+	}
+	return i;
 }
 
 /* ==========================================================================
@@ -1668,7 +1669,7 @@ return function deflate(str, level) {
 })();
 
 onmessage = function worker(m) {
-  postMessage(deflate(m.data, 9));
+  postMessage(deflate(m.data, 9), location.origin);
 };
 
 onconnect = function sharedWorker(e) {
